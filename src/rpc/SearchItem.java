@@ -1,7 +1,6 @@
 package rpc;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -32,21 +31,6 @@ public class SearchItem extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.setContentType("application/json");
-		PrintWriter out = response.getWriter();
-		
-		String username = "";
-		if (request.getParameter("username") != null) {
-			username = request.getParameter("username");
-		}
-		JSONObject obj = new JSONObject();
-		try {
-			obj.put("username", username);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		out.print(obj);
-		
 		JSONArray array = new JSONArray();
 		try {
 			array.put(new JSONObject().put("username", "abcd"));
@@ -54,9 +38,7 @@ public class SearchItem extends HttpServlet {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		out.print(array);
-		
-		out.close();
+		RpcHelper.writeJSONArray(response, array);
 	}
 
 	/**
