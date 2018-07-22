@@ -7,8 +7,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /*
- * TicketMaster response is dirty. Sometimes we may need to compute
- * and generate fields by programming.
+ * Data Purification: TicketMaster response is dirty. Sometimes we may need to compute
+ * and generate fields by programming. Create instance with builder pattern.
  * */
 
 public class Item {

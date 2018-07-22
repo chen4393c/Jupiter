@@ -40,6 +40,7 @@ public class TicketMasterAPI {
 		 * */
 		String query = String.format("apikey=%s&geoPoint=%s&keyword=%s&radius=%s", 
 				API_KEY, geoHash, keyword, 50);
+		
 		try {
 			// Open a HTTP connection between your Java application and TicketMaster based on url
 			HttpURLConnection connection = (HttpURLConnection) new URL(URL + "?" + query)
@@ -54,9 +55,17 @@ public class TicketMasterAPI {
 			System.out.println("\nSending 'GET' request to URL : " + URL + "?" + query);
 			System.out.println("Response Code : " + responseCode);
 			
-			// Now read response body to get events data
-			BufferedReader in = new BufferedReader(new 
-					InputStreamReader(connection.getInputStream()));
+			/*
+			 * Now read response body to get events data. 
+			 * BE CAREFUL to use UTF-8 char-set.
+			 * Otherwise, you will get strange characters.
+			 * */ 
+			BufferedReader in = new BufferedReader(
+					new InputStreamReader(
+							connection.getInputStream(),
+							"UTF-8"
+					)
+			);
 			String inputLine;
 			StringBuilder response = new StringBuilder();
 			while ((inputLine = in.readLine()) != null) {
@@ -84,7 +93,8 @@ public class TicketMasterAPI {
 	private void queryAPI(double lat, double lon) {
 		JSONArray events = search(lat, lon, null);
 		try {
-			for (int i = 0; i < events.length(); i++) {
+			// Only test a single event
+			for (int i = 0; i < 1; i++) {
 				JSONObject event = events.getJSONObject(i);
 				System.out.println(event);
 			}
@@ -101,4 +111,26 @@ public class TicketMasterAPI {
 		// Mountain View, CA
 		tmApi.queryAPI(37.38, -122.08);
 	}
+	
+	/*
+	 * sample response:
+	 * {
+	 * 		"_embedded": {
+	 * 			"events": [
+	 * 				{
+	 * 					"name": "JAY-Z and BEYONCÉ - OTR II",
+                		"type": "event",
+                		"id": "vvG1iZ4ARirJkY",
+                		"test": false,
+                		"url": "https://www.ticketmaster.com/jayz-and-beyonce-otr-ii-pasadena-california-09-22-2018/event/0B00545BEC7A61B0",
+                		"locale": "en-us",
+	 * 				},
+	 * 				...
+	 * 			]
+	 * 		},
+	 * 		"_links": {...},
+	 * 		"page": {...}	
+	 * }
+	 * 	
+	 * */
 }
