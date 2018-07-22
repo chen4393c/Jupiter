@@ -1,6 +1,7 @@
 package rpc;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,6 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import entity.Item;
+import external.TicketMasterAPI;
 
 /**
  * Servlet implementation class SearchItem
@@ -31,14 +35,26 @@ public class SearchItem extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		JSONArray array = new JSONArray();
-		try {
-			array.put(new JSONObject().put("username", "abcd"));
-			array.put(new JSONObject().put("username", "abcd"));
-		} catch (JSONException e) {
-			e.printStackTrace();
+		double lat = Double.parseDouble(request.getParameter("lat"));
+		double lon = Double.parseDouble(request.getParameter("lon"));
+		// term can be empty
+		String keyword = request.getParameter("term");
+		
+		TicketMasterAPI tmAPI = new TicketMasterAPI();
+		
+		/*
+		 * 1. Send HTTP GET request to get all JSONObject events 
+		 * and purify the data into Item objects
+		 * */
+		List<Item> items = tmAPI.search(lat, lon, keyword);
+		// 2. Convert the purified data back into JSONArray
+		JSONArray eventJSONArray = new JSONArray();
+		for (Item item : items) {
+			JSONObject eventJSONObject = item.toJSONObject();
+			eventJSONArray.put(eventJSONObject);
 		}
-		RpcHelper.writeJSONArray(response, array);
+		
+		RpcHelper.writeJSONArray(response, eventJSONArray);
 	}
 
 	/**

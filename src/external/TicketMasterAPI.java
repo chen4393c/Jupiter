@@ -96,31 +96,6 @@ public class TicketMasterAPI {
 	}
 	
 	/*
-	 * A print function to show JSON array returned from TicketMaster for debugging.
-	 * */
-	private void queryAPI(double lat, double lon) {
-		List<Item> itemList = search(lat, lon, null);
-		try {
-			// Only test a single event
-			for (Item item : itemList) {
-				JSONObject event = item.toJSONObject();
-				System.out.println(event);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	/*
-	 * Main entry for sample TicketMaster API requests.
-	 * */
-	public static void main(String[] args) {
-		TicketMasterAPI tmApi = new TicketMasterAPI();
-		// Mountain View, CA
-		tmApi.queryAPI(37.38, -122.08);
-	}
-	
-	/*
 	 * sample response:
 	 * {
 	 * 		"_embedded": {
@@ -283,5 +258,30 @@ public class TicketMasterAPI {
 			itemList.add(builder.build());
 		}
 		return itemList;
+	}
+	
+	/*
+	 * A print function to show JSON array returned from TicketMaster for debugging.
+	 * */
+	private void queryAPI(double lat, double lon) {
+		List<Item> itemList = search(lat, lon, null);
+		try {
+			// Only test a single event
+			for (Item item : itemList) {
+				JSONObject event = item.toJSONObject();
+				System.out.println(event);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/*
+	 * Main entry for sample TicketMaster API requests.
+	 * */
+	public static void main(String[] args) {
+		TicketMasterAPI tmApi = new TicketMasterAPI();
+		// Mountain View, CA
+		tmApi.queryAPI(37.38, -122.08);
 	}
 }
