@@ -28,7 +28,7 @@ public class TicketMasterAPI {
 	/*
 	 * This function will actually send HTTP request and get response.
 	 * */
-	public JSONArray search(double lat, double lon, String keyword) {
+	public List<Item> search(double lat, double lon, String keyword) {
 		// Encode keyword in url since it may contain special characters
 		if (keyword == null) {
 			keyword = DEFAULT_KEYWORD;
@@ -84,26 +84,26 @@ public class TicketMasterAPI {
 			// Handle response data in JSON format
 			JSONObject obj = new JSONObject(response.toString());
 			if (obj.isNull("_embedded")) {
-				return new JSONArray();
+				return new ArrayList();
 			}
 			JSONObject embedded = obj.getJSONObject("_embedded");
 			JSONArray events = embedded.getJSONArray("events");
-			return events;
+			return getItemList(events);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return new JSONArray();
+		return new ArrayList<>();
 	}
 	
 	/*
 	 * A print function to show JSON array returned from TicketMaster for debugging.
 	 * */
 	private void queryAPI(double lat, double lon) {
-		JSONArray events = search(lat, lon, null);
+		List<Item> itemList = search(lat, lon, null);
 		try {
 			// Only test a single event
-			for (int i = 0; i < 1; i++) {
-				JSONObject event = events.getJSONObject(i);
+			for (Item item : itemList) {
+				JSONObject event = item.toJSONObject();
 				System.out.println(event);
 			}
 		} catch (Exception e) {
