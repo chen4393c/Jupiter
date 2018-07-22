@@ -14,7 +14,6 @@ import org.json.JSONObject;
 public class Item {
 	private String itemId;
 	private String name;
-	private double rating;
 	private String address;
 	private Set<String> categories;
 	private String imageUrl;
@@ -27,7 +26,6 @@ public class Item {
 	private Item(ItemBuilder builder) {
 		this.itemId = builder.itemId;
 		this.name = builder.name;
-		this.rating = builder.rating;
 		this.address = builder.address;
 		this.categories = builder.categories;
 		this.imageUrl = builder.imageUrl;
@@ -46,7 +44,6 @@ public class Item {
 		try {
 			obj.put("item_id", itemId);
 			obj.put("name", name);
-			obj.put("rating", rating);
 			obj.put("address", address);
 			obj.put("categories", new JSONArray(categories));
 			obj.put("image_url", imageUrl);
@@ -65,10 +62,6 @@ public class Item {
 	
 	public String getName() {
 		return name;
-	}
-	
-	public double getRating() {
-		return rating;
 	}
 	
 	public String getAddress() {
@@ -108,7 +101,6 @@ public class Item {
 	public static class ItemBuilder {
 		private String itemId;
 		private String name;
-		private double rating;
 		private String address;
 		private Set<String> categories;
 		private String imageUrl;
@@ -124,12 +116,6 @@ public class Item {
 		public void setName(String name) {
 			this.name = name;
 		}
-
-
-		public void setRating(double rating) {
-			this.rating = rating;
-		}
-
 
 		public void setAddress(String address) {
 			this.address = address;

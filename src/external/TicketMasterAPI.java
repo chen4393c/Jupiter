@@ -4,10 +4,18 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.net.URL;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import entity.Item;
+import entity.Item.ItemBuilder;
 
 /*
  * This class will help us send HTTP request to TicketMaster API and get response.
@@ -124,6 +132,32 @@ public class TicketMasterAPI {
                 		"test": false,
                 		"url": "https://www.ticketmaster.com/jayz-and-beyonce-otr-ii-pasadena-california-09-22-2018/event/0B00545BEC7A61B0",
                 		"locale": "en-us",
+                		"images": [..],
+                		"distance": 1.46,
+                		"units": "MILES",
+                		"sales": {..},
+                		"dates": {..},
+                		"classifications": [..],
+                		"promoters": [..],
+                		"priceRanges": [..],
+                		"seatmap": {..},
+                		"ticketLimit": {..},
+                		"_links": {..},
+                		"_embedded": {
+							"venues": [
+								...,
+								"address": {
+									"line1": 1016 Washington Ave,
+									"line2": ...,
+									"line3": ...
+								},
+								...,
+								"city": {
+									"name": "Minneapolis"
+								}
+							],
+							"attractions": [..]
+						}
 	 * 				},
 	 * 				...
 	 * 			]
@@ -133,4 +167,121 @@ public class TicketMasterAPI {
 	 * }
 	 * 	
 	 * */
+	
+	/*
+	 * Helper methods for parsing JSON data
+	 * 
+	 * "_embedded": {
+			"venues": [
+				...,
+				"address": {
+					"line1": 1016 Washington Ave,
+					"line2": ...,
+					"line3": ...
+				},
+				...,
+				"city": {
+					"name": "Minneapolis"
+				}
+			],
+			"attractions": [..]
+		}
+	 * */
+	private String getAddress(JSONObject event) throws JSONException {
+		if (!event.isNull("_embedded")) {
+			JSONObject embedded = event.getJSONObject("_embedded");
+			if (!embedded.isNull("venues")) {
+				JSONArray venues = embedded.getJSONArray("venues");
+				StringBuilder result = new StringBuilder();
+				for (int i = 0; i < venues.length(); i++) {
+					JSONObject venue = venues.getJSONObject(i);
+					if (!venue.isNull("address")) {
+						JSONObject address = venue.getJSONObject("address");
+						if (!address.isNull("line1")) {
+							result.append(address.getString("line1"));
+						}
+						if (!address.isNull("line2")) {
+							result.append(address.getString("line2"));
+						}
+						if (!address.isNull("line3")) {
+							result.append(address.getString("line3"));
+						}
+						result.append(",");
+					}
+					
+					if (!venue.isNull("city")) {
+						JSONObject city = venue.getJSONObject("city");
+						if (!city.isNull("name")) {
+							result.append(city.getString("name"));
+						}
+					}
+					
+					if (result.length() > 0) {
+						return result.toString();
+					}
+				}
+			}
+		}
+		return "";
+	}
+	
+	// {"images": [{"url": "www.example.com/my_image.jpg"}, ...]}
+	private String getImageUrl(JSONObject event) throws JSONException {
+		if (!event.isNull("images")) {
+			JSONArray images = event.getJSONArray("images");
+			for (int i = 0; i < images.length(); i++) {
+				JSONObject image = images.getJSONObject(i);
+				if (!image.isNull("url")) {
+					return image.getString("url");
+				}
+			}
+		}
+		return "";
+	}
+	
+	// {"classifications" : [{"segment": {"name": "music"}}, ...]}
+	private Set<String> getCategories(JSONObject event) throws JSONException {
+		Set<String> categories = new HashSet<>();
+		if (!event.isNull("classifications")) {
+			JSONArray classifications = event.getJSONArray("classifications");
+			for (int i = 0; i < classifications.length(); i++) {
+				JSONObject classification = classifications.getJSONObject(i);
+				if (!classification.isNull("segment")) {
+					JSONObject segment = classification.getJSONObject("segment");
+					if (!segment.isNull("name")) {
+						categories.add(segment.getString("name"));
+					}
+				}
+			}
+		}
+		return categories;
+	}
+
+	// Convert JSONArray into Item objects
+	private List<Item> getItemList(JSONArray events) throws JSONException {
+		List<Item> itemList = new ArrayList<>();
+		for (int i = 0; i < events.length(); i++) {
+			JSONObject event = events.getJSONObject(i);
+			ItemBuilder builder = new ItemBuilder();
+			
+			if (!event.isNull("id")) {
+				builder.setItemId(event.getString("id"));
+			}
+			if (!event.isNull("name")) {
+				builder.setName(event.getString("name"));
+			}
+			builder.setAddress(getAddress(event));
+			builder.setCategories(getCategories(event));
+			builder.setImageUrl(getImageUrl(event));
+			if (!event.isNull("url")) {
+				builder.setUrl(event.getString("url"));
+			}
+			if (!event.isNull("distance")) {
+				builder.setDistance(event.getDouble("distance"));
+			}
+			
+			itemList.add(builder.build());
+		}
+		return itemList;
+	}
 }
