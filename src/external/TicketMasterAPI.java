@@ -84,7 +84,7 @@ public class TicketMasterAPI {
 			// Handle response data in JSON format
 			JSONObject obj = new JSONObject(response.toString());
 			if (obj.isNull("_embedded")) {
-				return new ArrayList();
+				return new ArrayList<>();
 			}
 			JSONObject embedded = obj.getJSONObject("_embedded");
 			JSONArray events = embedded.getJSONArray("events");
