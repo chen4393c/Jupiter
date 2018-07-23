@@ -12,8 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import db.DBConnection;
+import db.DBConnectionFactory;
 import entity.Item;
-import external.TicketMasterAPI;
 
 /**
  * Servlet implementation class SearchItem
@@ -46,14 +47,13 @@ public class SearchItem extends HttpServlet {
 		// term can be empty
 		String keyword = request.getParameter("term");
 		
-		TicketMasterAPI tmAPI = new TicketMasterAPI();
-		
-		/*
-		 * 1. Send HTTP GET request to get all JSONObject events 
-		 * and purify the data into Item objects
-		 * */
-		List<Item> items = tmAPI.search(lat, lon, keyword);
-		// 2. Convert the purified data back into JSONArray
+		// 1. Set up the db connection to save data
+        DBConnection connection = DBConnectionFactory.getConnection();
+        // 2. Send HTTP request to search with TicketMasterAPI, purify the data and save to db
+        List<Item> items = connection.searchItems(lat, lon, keyword);
+        // 3. Close the connection
+        connection.close();
+        // 4. Convert the purified data back into JSONArray
 		JSONArray eventJSONArray = new JSONArray();
 		for (Item item : items) {
 			JSONObject eventJSONObject = item.toJSONObject();

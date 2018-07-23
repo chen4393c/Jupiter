@@ -1,5 +1,7 @@
 package db;
 
+import db.mysql.MySQLConnection;
+
 public class DBConnectionFactory {
 	// Create different db instances: MySQL or MongoDB
 	private static final String DEFAULT_DB = "mysql";
@@ -7,7 +9,7 @@ public class DBConnectionFactory {
 	public static DBConnection getConnection(String db) throws IllegalArgumentException {
 		switch (db) {
 			case "mysql":
-				return null; // new MySQLConnection()
+				return new MySQLConnection();
 			case "mongodb":
 				return null; // new MongoDBConnection()
 			default:

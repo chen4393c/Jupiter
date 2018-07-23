@@ -66,7 +66,7 @@ public interface DBConnection {
 	 * @param userId
 	 * @return full name of the user
 	 * */
-	public String getFullname(String userId);
+	public String getFullName(String userId);
 	
 	/**
 	 * Check whether the user credential is correct for user login.
