@@ -34,8 +34,15 @@ public class SearchItem extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		double lat = Double.parseDouble(request.getParameter("lat"));
-		double lon = Double.parseDouble(request.getParameter("lon"));
+		double lat, lon;
+        try {
+            lat = Double.parseDouble(request.getParameter("lat"));
+            lon = Double.parseDouble(request.getParameter("lon"));
+        } catch (Exception e) {
+            // Use default location if parse failed
+            lat = 37.38;
+            lon = -122.08;
+        }
 		// term can be empty
 		String keyword = request.getParameter("term");
 		
