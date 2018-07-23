@@ -65,7 +65,6 @@ public class MySQLTableCreation {
 				+ ")";
 		stmt.executeUpdate(sql);
 		
-		
 		sql = "CREATE TABLE users ("
 				+ "user_id VARCHAR(255) NOT NULL, "
 				+ "password VARCHAR(255) NOT NULL, "
@@ -87,7 +86,7 @@ public class MySQLTableCreation {
 		
 		// 4. Insert a fake user
 		sql = "INSERT INTO users VALUES"
-				+ "(\"1111\", \"2222\", \"John\", \"Smith\")";
+				+ "(\"1111\", \"2222\", \"Chaoran\", \"Chen\")";
 		stmt.executeUpdate(sql);
 		
 		System.out.println("Import is done successfully");
