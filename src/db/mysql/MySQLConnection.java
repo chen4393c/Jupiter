@@ -38,14 +38,38 @@ public class MySQLConnection implements DBConnection {
 
 	@Override
 	public void setFavoriteItems(String userId, List<String> itemIds) {
-		// TODO Auto-generated method stub
-		
+		if (conn == null) {
+            return;
+        }
+        String sql = "INSERT IGNORE INTO history(user_id, item_id) VALUES(?, ?)";
+        try {
+            for (String itemId : itemIds) {
+                PreparedStatement statement = conn.prepareStatement(sql);
+                statement.setString(1, userId);
+                statement.setString(2, itemId);
+                statement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 	}
 
 	@Override
 	public void unsetFavoriteItems(String userId, List<String> itemIds) {
-		// TODO Auto-generated method stub
-		
+		if (conn == null) {
+            return;
+        }
+        String sql = "DELETE FROM history WHERE user_id = ? AND item_id = ?";
+        try {
+            for (String itemId : itemIds) {
+                PreparedStatement statement = conn.prepareStatement(sql);
+                statement.setString(1, userId);
+                statement.setString(2, itemId);
+                statement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 	}
 
 	@Override
