@@ -7,28 +7,27 @@
     var lat = 37.38;
     var lng = -122.08;
 
-    window.onload = function () {
-        // Register event listeners
-        var welcomeMsg = $('welcome-msg');
-        welcomeMsg.innerHTML = `Welcome, ${userFullName}!`;
-        var nearbyButton = $('nearby-btn');
-        nearbyButton.addEventListener('click', loadNearbyItems);
-        var favoriteButton = $('fav-btn');
-        favoriteButton.addEventListener('click', loadFavoriteItems);
-        var recommendButton = $('recommend-btn');
-        recommendButton.addEventListener('click', loadRecommendedItems);
-    }
-
     /**
      * Initialization
      * */
     function init() {
+        var welcomeMsg = $('welcome-msg');
+        welcomeMsg.innerHTML = `Welcome, ${userFullName}!`;
+
+        // Register event listeners
+        $('nearby-btn').addEventListener('click', loadNearbyItems);
+        $('fav-btn').addEventListener('click', loadFavoriteItems);
+        $('recommend-btn').addEventListener('click', loadRecommendedItems);
+
         initGeolocation();
     }
 
     function initGeolocation() {
         if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(onPositionUpdated, onLoadPositionFailed, { maximumAge: 60000 });
+            navigator.geolocation.getCurrentPosition(onPositionUpdated,
+                onLoadPositionFailed, {
+                    maximumAge: 60000
+                });
             showLoadingMessage('Retrieving your location...');
         } else {
             onLoadPositionFailed();
@@ -56,10 +55,11 @@
             if ('loc' in result) {
                 var loc = result.loc.split(',');
                 lat = loc[0];
-                lon = loc[1];
+                lng = loc[1];
             } else {
                 console.warn('Getting location by IP failed.');
             }
+            loadNearbyItems();
         });
     }
 
@@ -88,9 +88,7 @@
 
     function showLoadingMessage(msg) {
         var itemList = $('item-list');
-        if (itemList) {
-            itemList.innerHTML = '<p class="notice"><i class="fa fa-spinner fa-spin"></i> ' + msg + '</p>';
-        }
+        itemList.innerHTML = '<p class="notice"><i class="fa fa-spinner fa-spin"></i> ' + msg + '</p>';
     }
 
     function showWarningMessage(msg) {
@@ -163,7 +161,8 @@
         if (body === null) {
             xhr.send();
         } else {
-            xhr.setRequestHeader("Content-Type", "application/json;charset=utf-8");
+            xhr.setRequestHeader("Content-Type",
+                "application/json;charset=utf-8");
             xhr.send(body);
         }
     }
