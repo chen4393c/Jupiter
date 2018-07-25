@@ -3,7 +3,9 @@ package db.mysql;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -74,14 +76,79 @@ public class MySQLConnection implements DBConnection {
 
 	@Override
 	public Set<String> getFavoriteItemIds(String userId) {
-		// TODO Auto-generated method stub
-		return null;
+		Set<String> itemIds = new HashSet<>();
+        if (conn == null) {
+            return itemIds;
+        }
+        String sql = "SELECT item_id FROM history WHERE user_id = ?";
+        try {
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setString(1, userId);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                itemIds.add(resultSet.getString("item_id"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return itemIds;
 	}
+	
+	@Override
+    public Set<Item> getFavoriteItems(String userId) {
+        Set<Item> items = new HashSet<>();
+        if (conn == null) {
+            return items;
+        }
+        Set<String> itemIds = getFavoriteItemIds(userId);
+        String sql = "SELECT * FROM items WHERE item_id = ?";
+        try {
+            PreparedStatement statement = conn.prepareStatement(sql);
+            for (String itemId : itemIds) {
+                statement.setString(1, itemId);
+                ResultSet resultSet = statement.executeQuery();
+
+                while (resultSet.next()) {
+                    Item.ItemBuilder builder = new Item.ItemBuilder();
+                    builder.setItemId(itemId);
+                    builder.setName(resultSet.getString("name"));
+                    builder.setAddress(resultSet.getString("address"));
+                    builder.setCategories(getCategories(itemId));
+                    builder.setImageUrl(resultSet.getString("image_url"));
+                    builder.setUrl(resultSet.getString("url"));
+                    builder.setDistance(resultSet.getDouble("distance"));
+
+                    items.add(builder.build());
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return items;
+    }
 
 	@Override
 	public Set<String> getCategories(String itemId) {
-		// TODO Auto-generated method stub
-		return null;
+		Set<String> categories = new HashSet<>();
+        if (conn == null) {
+            return categories;
+        }
+        String sql = "SELECT category FROM categories WHERE item_id = ?";
+        try {
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setString(1, itemId);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                categories.add(resultSet.getString("category"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return categories;
 	}
 
 	@Override

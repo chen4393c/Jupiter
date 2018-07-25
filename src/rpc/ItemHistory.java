@@ -3,6 +3,7 @@ package rpc;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -16,6 +17,7 @@ import org.json.JSONObject;
 
 import db.DBConnection;
 import db.DBConnectionFactory;
+import entity.Item;
 
 /**
  * Servlet implementation class ItemHistory
@@ -36,8 +38,27 @@ public class ItemHistory extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		String userId = request.getParameter("user_id");
+        if (userId == null || userId.isEmpty()) {
+            System.out.println("Cannot find this user asking for his/her favorite items");
+            return;
+        }
+        DBConnection connection = DBConnectionFactory.getConnection();
+        Set<Item> items = connection.getFavoriteItems(userId);
+        connection.close();
+
+        JSONArray itemsJSONArray = new JSONArray();
+        for (Item item : items) {
+            JSONObject itemJSONObject = item.toJSONObject();
+            try {
+                itemJSONObject.put("favorite", true);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            itemsJSONArray.put(itemJSONObject);
+        }
+
+        RpcHelper.writeJSONArray(response, itemsJSONArray);
 	}
 
 	/**
