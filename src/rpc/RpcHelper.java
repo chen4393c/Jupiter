@@ -50,7 +50,7 @@ public class RpcHelper {
      *     ]
      * }
      * */
-    public static JSONObject parseHttpRequest(HttpServletRequest request) {
+    public static JSONObject parseHttpRequestBody(HttpServletRequest request) {
         StringBuilder jsonBuilder = new StringBuilder();
         String line = null;
         try {

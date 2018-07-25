@@ -67,7 +67,7 @@ public class ItemHistory extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// 1. Parse HTTP POST request into JSON object
         // input format: {"user_id": "1111", "favorite": ["abcd", "efgh"]}
-        JSONObject inputRequest = RpcHelper.parseHttpRequest(request);
+        JSONObject inputRequest = RpcHelper.parseHttpRequestBody(request);
         try {
             // 2. Convert JSONObject into Java data: get user and his/her favorite items
             String userId = inputRequest.getString("user_id");
@@ -95,7 +95,7 @@ public class ItemHistory extends HttpServlet {
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// 1. Parse HTTP DELETE request into JSON object
         // input format: {"user_id": "1111", "favorite": ["abcd", "efgh"]}
-        JSONObject inputRequest = RpcHelper.parseHttpRequest(request);
+        JSONObject inputRequest = RpcHelper.parseHttpRequestBody(request);
         try {
             // 2. Convert JSONObject into Java data: get user and his/her favorite items
             String userId = inputRequest.getString("user_id");
