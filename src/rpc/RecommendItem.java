@@ -1,6 +1,7 @@
 package rpc;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -9,8 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+
+import algorithm.GeoRecommendation;
+import entity.Item;
 
 /**
  * Servlet implementation class RecommendItem
@@ -31,23 +33,25 @@ public class RecommendItem extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		JSONArray array = new JSONArray();
-		try {
-			JSONObject obj1 = new JSONObject();
-			obj1.put("name", "abcd");
-			obj1.put("address", "san francisco");
-			obj1.put("time", "01/01/2017");
-			array.put(obj1);
-			
-			JSONObject obj2 = new JSONObject();
-			obj2.put("name", "1234");
-			obj2.put("address", "san jose");
-			obj2.put("time", "01/02/2017");
-			array.put(obj2);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		RpcHelper.writeJSONArray(response, array);
+		String userId = request.getParameter("user_id");
+        double lat, lon;
+        try {
+            lat = Double.parseDouble(request.getParameter("lat"));
+            lon = Double.parseDouble(request.getParameter("lon"));
+        } catch (NumberFormatException e) {
+            // Use default location if parse failed
+            lat = 37.38;
+            lon = -122.08;
+        }
+
+        GeoRecommendation recommendation = new GeoRecommendation();
+        List<Item> recommendedItems = recommendation.recommendItemIds(userId, lat, lon);
+
+        JSONArray recommendedItemsJSONarray = new JSONArray();
+        for (Item item : recommendedItems) {
+            recommendedItemsJSONarray.put(item.toJSONObject());
+        }
+        RpcHelper.writeJSONArray(response, recommendedItemsJSONarray);
 	}
 
 	/**

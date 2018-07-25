@@ -15,6 +15,8 @@
         nearbyButton.addEventListener('click', loadNearbyItems);
         var favoriteButton = $('fav-btn');
         favoriteButton.addEventListener('click', loadFavoriteItems);
+        var recommendButton = $('recommend-btn');
+        recommendButton.addEventListener('click', loadRecommendedItems);
     }
 
     /**
@@ -228,6 +230,35 @@
             }
         }, function () {
             showErrorMessage('Cannot load favorite events.');
+        });
+    }
+
+    /**
+     * API #3 Load recommended items
+     *
+     * API end point: GET /recommendation?user_id=1111
+     * */
+    function loadRecommendedItems() {
+        activateButton('recommend-btn');
+
+        // The request parameters
+        var url = './recommendation';
+        var params = `user_id=${userId}&lat=${lat}&lon=${lng}`;
+        var body = JSON.stringify({});
+
+        // Display loading message
+        showLoadingMessage('Loading recommended events...');
+
+        // Make AJAX call
+        ajax('GET', `${url}?${params}`, body, function (response) {
+            var items = JSON.parse(response);
+            if (!items || items.length === 0) {
+                showWarningMessage('No recommended event. Make sure you have favorite event');
+            } else {
+                listItems(items);
+            }
+        }, function () {
+            showErrorMessage('Cannot load recommended events.');
         });
     }
 
