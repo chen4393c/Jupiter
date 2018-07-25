@@ -2,6 +2,7 @@ package rpc;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -10,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import db.DBConnection;
@@ -35,7 +37,8 @@ public class SearchItem extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		double lat, lon;
+		String userId = request.getParameter("user_id"); // for displaying favorite in search
+        double lat, lon;
         try {
             lat = Double.parseDouble(request.getParameter("lat"));
             lon = Double.parseDouble(request.getParameter("lon"));
@@ -44,23 +47,33 @@ public class SearchItem extends HttpServlet {
             lat = 37.38;
             lon = -122.08;
         }
-		// term can be empty
-		String keyword = request.getParameter("term");
-		
-		// 1. Set up the db connection to save data
+
+        // term can be empty
+        String keyword = request.getParameter("term");
+        // 1. Set up the db connection to save data
         DBConnection connection = DBConnectionFactory.getConnection();
         // 2. Send HTTP request to search with TicketMasterAPI, purify the data and save to db
         List<Item> items = connection.searchItems(lat, lon, keyword);
-        // 3. Close the connection
+
+        // 3. Check user's favorite event list
+        Set<String> favoriteItemIds = connection.getFavoriteItemIds(userId);
+
+        // 4. Close the connection
         connection.close();
-        // 4. Convert the purified data back into JSONArray
-		JSONArray eventJSONArray = new JSONArray();
-		for (Item item : items) {
-			JSONObject eventJSONObject = item.toJSONObject();
-			eventJSONArray.put(eventJSONObject);
-		}
-		
-		RpcHelper.writeJSONArray(response, eventJSONArray);
+        // 5. Convert the purified data back into JSONArray
+        JSONArray eventJSONArray = new JSONArray();
+
+        try {
+            for (Item item : items) {
+                JSONObject eventJSONObject = item.toJSONObject();
+                eventJSONObject.put("favorite", favoriteItemIds.contains(eventJSONObject.getString("item_id")));
+                eventJSONArray.put(eventJSONObject);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        RpcHelper.writeJSONArray(response, eventJSONArray);
 	}
 
 	/**
