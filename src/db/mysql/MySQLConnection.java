@@ -1,22 +1,18 @@
 package db.mysql;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import db.DBConnection;
 import entity.Item;
 import external.TicketMasterAPI;
 
+import java.sql.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 public class MySQLConnection implements DBConnection {
-	private Connection conn;
-	
-	public MySQLConnection() {
+    private Connection conn;
+
+    public MySQLConnection() {
         try {
             // Register driver
             Class.forName("com.mysql.cj.jdbc.Driver").getConstructor().newInstance();
@@ -27,23 +23,23 @@ public class MySQLConnection implements DBConnection {
         }
     }
 
-	@Override
-	public void close() {
-		if (conn != null) {
+    @Override
+    public void close() {
+        if (conn != null) {
             try {
                 conn.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
-	}
+    }
 
-	@Override
-	public void setFavoriteItems(String userId, List<String> itemIds) {
-		if (conn == null) {
+    @Override
+    public void setFavoriteItems(String userId, List<String> itemIds) {
+        if (conn == null) {
             return;
         }
-        String sql = "INSERT IGNORE INTO history(user_id, item_id) VALUES(?, ?)";
+        String sql = "INSERT IGNORE INTO history (user_id, item_id) VALUES (?, ?)";
         try {
             for (String itemId : itemIds) {
                 PreparedStatement statement = conn.prepareStatement(sql);
@@ -54,11 +50,11 @@ public class MySQLConnection implements DBConnection {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-	}
+    }
 
-	@Override
-	public void unsetFavoriteItems(String userId, List<String> itemIds) {
-		if (conn == null) {
+    @Override
+    public void unsetFavoriteItems(String userId, List<String> itemIds) {
+        if (conn == null) {
             return;
         }
         String sql = "DELETE FROM history WHERE user_id = ? AND item_id = ?";
@@ -72,11 +68,11 @@ public class MySQLConnection implements DBConnection {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-	}
+    }
 
-	@Override
-	public Set<String> getFavoriteItemIds(String userId) {
-		Set<String> itemIds = new HashSet<>();
+    @Override
+    public Set<String> getFavoriteItemIds(String userId) {
+        Set<String> itemIds = new HashSet<>();
         if (conn == null) {
             return itemIds;
         }
@@ -94,9 +90,9 @@ public class MySQLConnection implements DBConnection {
             e.printStackTrace();
         }
         return itemIds;
-	}
-	
-	@Override
+    }
+
+    @Override
     public Set<Item> getFavoriteItems(String userId) {
         Set<Item> items = new HashSet<>();
         if (conn == null) {
@@ -129,9 +125,9 @@ public class MySQLConnection implements DBConnection {
         return items;
     }
 
-	@Override
-	public Set<String> getCategories(String itemId) {
-		Set<String> categories = new HashSet<>();
+    @Override
+    public Set<String> getCategories(String itemId) {
+        Set<String> categories = new HashSet<>();
         if (conn == null) {
             return categories;
         }
@@ -149,13 +145,13 @@ public class MySQLConnection implements DBConnection {
             e.printStackTrace();
         }
         return categories;
-	}
+    }
 
-	@Override
-	public List<Item> searchItems(double lat, double lon, String term) {
-		/*
-         * Similar code with SearchItem.java: call TickMasterAPI.search
-         * */
+    @Override
+    public List<Item> searchItems(double lat, double lon, String term) {
+        /*
+        * Similar code with SearchItem.java: call TickMasterAPI.search
+        * */
         TicketMasterAPI tmAPI = new TicketMasterAPI();
         /*
          * 1. Send HTTP GET request to get all JSONObject events
@@ -167,17 +163,17 @@ public class MySQLConnection implements DBConnection {
             saveItem(item);
         }
         return items;
-	}
+    }
 
-	@Override
-	public void saveItem(Item item) {
-		if (conn == null) {
+    @Override
+    public void saveItem(Item item) {
+        if (conn == null) {
             return;
         }
         try {
             // 1. Insert data from item object into items table
             // IGNORE: handle duplicate records
-            String sql = "INSERT IGNORE INTO items VALUES(?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT IGNORE INTO items VALUES (?, ?, ?, ?, ?, ?)";
 
             PreparedStatement statement = conn.prepareStatement(sql);
             statement.setString(1, item.getItemId());
@@ -199,11 +195,11 @@ public class MySQLConnection implements DBConnection {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-	}
+    }
 
-	@Override
-	public String getFullName(String userId) {
-		if (conn == null) {
+    @Override
+    public String getFullName(String userId) {
+        if (conn == null) {
             return null;
         }
         String name = "";
@@ -221,11 +217,11 @@ public class MySQLConnection implements DBConnection {
             e.printStackTrace();
         }
         return name;
-	}
+    }
 
-	@Override
-	public boolean verifyLogin(String userId, String password) {
-		if (conn == null) {
+    @Override
+    public boolean verifyLogin(String userId, String password) {
+        if (conn == null) {
             return false;
         }
         try {
@@ -241,6 +237,42 @@ public class MySQLConnection implements DBConnection {
             e.printStackTrace();
         }
         return false;
-	}
+    }
 
+    @Override
+    public boolean checkDuplicateUserId(String userId) {
+        if (conn == null) {
+            return false;
+        }
+        try {
+            String sql = "SELECT user_id FROM users WHERE user_id = ?";
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setString(1, userId);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    @Override
+    public void createNewUser(String userId, String password, String firstName, String lastName) {
+        if (conn == null){
+            return;
+        }
+        try {
+            String sql = "INSERT INTO users VALUES (?, ?, ?, ?)";
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setString(1, userId);
+            statement.setString(2, password);
+            statement.setString(3, firstName);
+            statement.setString(4, lastName);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -102,7 +102,6 @@ ul {
 }
 #login-form button {
     cursor: pointer;
-    float: right;
     padding: 8px 20px;
     text-align: right;
 }
@@ -113,6 +112,18 @@ ul {
 }
 #login-btn {
     background-color: cyan;
+    border: none;
+    color: black;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+#sign-up-btn {
+    background-color: greenyellow;
     border: none;
     color: black;
     padding: 15px 32px;

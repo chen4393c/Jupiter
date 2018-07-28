@@ -28,13 +28,13 @@ public interface DBConnection {
 	public void unsetFavoriteItems(String userId, List<String> itemIds);
 	
 	/**
-	 * Get the favorite items id for a user.
+	 * Get the favorite item ids for a user.
 	 * 
 	 * @param userId
 	 * @return itemIds
 	 * */
 	public Set<String> getFavoriteItemIds(String userId);
-	
+
 	/**
 	 * Get the favorite items for a user
 	 *
@@ -42,7 +42,7 @@ public interface DBConnection {
 	 * @return items
 	 * */
 	public Set<Item> getFavoriteItems(String userId);
-	
+
 	/**
 	 * Get categories based on item id
 	 * 
@@ -84,4 +84,22 @@ public interface DBConnection {
 	 * @return boolean
 	 * */
 	public boolean verifyLogin(String userId, String password);
+
+	/**
+	 * Check if user id is already taken for new user registration.
+	 *
+	 * @param userId
+	 * @return boolean
+	 * */
+	public boolean checkDuplicateUserId(String userId);
+
+	/**
+	 * Create a new user.
+	 *
+	 * @param userId
+	 * @param password
+	 * @param firstName
+	 * @param lastName
+	 * */
+	public void createNewUser(String userId, String password, String firstName, String lastName);
 }
