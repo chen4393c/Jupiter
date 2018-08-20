@@ -36,19 +36,14 @@ A step by step series of examples that tell you how to get a development env run
 
 3. Import the project with your IDE
 
-For Eclipse users:
+For Eclipse:
+  a. Copy your existing projects Jupiter under you new workspace directory
+  b. In Eclipse, click File -> Open Projects from File System
+  c. Click "show other specialized import wizards", and select "Existing Projects into Workspace" under General folder
+  d. Select Jupiter folder as root directory and click finish
 
-a. Copy your existing projects Jupiter under you new workspace directory
-
-b. In Eclipse, click File -> Open Projects from File System
-
-c. Click "show other specialized import wizards", and select "Existing Projects into Workspace" under General folder
-
-d. Select Jupiter folder as root directory and click finish
-
-For Intellij IDEA users:
-
-a. Select "Import Project" and select the Jupiter folder
+For Intellij IDEA:
+  a. Select "Import Project" and select the Jupiter folder
 
 4. Launch the server.
 
