@@ -34,25 +34,13 @@ A step by step series of examples that tell you how to get a development env run
 
 2. Install and configure Apache Tomcat server with your IDE (Eclipse Java EE or Intellij IDEA Ultimate version)
 
-3. Import the project with your IDE
-
-For Eclipse:
-
-  a. Copy your existing projects Jupiter under you new workspace directory
+4. Copy your existing projects Jupiter under you new workspace/project directory 
   
-  b. In Eclipse, click File -> Open Projects from File System
-  
-  c. Click "show other specialized import wizards", and select "Existing Projects into Workspace" under General folder
-  
-  d. Select Jupiter folder as root directory and click finish
+5. <b>In Eclipse</b>, click File -> Open Projects from File System. Click "show other specialized import wizards", and select "Existing Projects into Workspace" under General folder. Select Jupiter folder as root directory and click finish. <b>In Intellij</b>, select "Import Project" and select the Jupiter folder.
 
-For Intellij IDEA:
+6. Launch the server.
 
-  a. Select "Import Project" and select the Jupiter folder
-
-4. Launch the server.
-
-5. Test the website with the following URL: 
+7. Test the website with the following URL: 
 
 For Eclipse: 
 ```
