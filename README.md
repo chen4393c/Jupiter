@@ -30,11 +30,29 @@ What things you need to install the software and how to install them
 
 A step by step series of examples that tell you how to get a development env running
 
-1. Install and configure Apache Tomcat server with your IDE (Eclipse Java EE or Intellij IDEA Ultimate version).
+1. Create a new workspace on your new computer
 
-2. Launch the server.
+2. Install and configure Apache Tomcat server with your IDE (Eclipse Java EE or Intellij IDEA Ultimate version)
 
-3. Test the website with the following URL: 
+3. Import the project with your IDE
+
+For Eclipse users:
+
+a. Copy your existing projects Jupiter under you new workspace directory
+
+b. In Eclipse, click File -> Open Projects from File System
+
+c. Click "show other specialized import wizards", and select "Existing Projects into Workspace" under General folder
+
+d. Select Jupiter folder as root directory and click finish
+
+For Intellij IDEA users:
+
+a. Select "Import Project" and select the Jupiter folder
+
+4. Launch the server.
+
+5. Test the website with the following URL: 
 
 For Eclipse: 
 ```
@@ -92,3 +110,4 @@ Generate the .war file and then you can deploy this web service with any cloud p
 * Vincent Chen
 * Sean
 * Jenny
+* Henry
