@@ -42,16 +42,9 @@ A step by step series of examples that tell you how to get a development env run
 
 7. Test the website with the following URL: 
 
-For Eclipse: 
-```
-http://localhost:8080/[YOUR_PROJECT_FOLDER_NAME]
-```
-
-For Intellij IDEA: 
-
-```
-http://localhost:8080
-```
+    For Eclipse: http://localhost:8080/Jupiter
+    
+    For Intellij IDEA: http://localhost:8080
 
 You will see the home page asking you to log in or sign up.
 
