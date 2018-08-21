@@ -42,7 +42,7 @@ public class Login extends HttpServlet {
                 response.setStatus(403); // Forbidden error
                 object.put("status", "Session Invalid");
             } else {
-                String userId = request.getParameter("user_id");
+                String userId = (String) session.getAttribute("user_id");
                 String name = connection.getFullName(userId);
                 object.put("status", "OK");
                 object.put("user_id", userId);

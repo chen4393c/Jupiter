@@ -268,7 +268,6 @@
      * API end point: [GET] /search?user_id=1111&lat=37.38&lon=-122.08
      * */
     function loadNearbyItems() {
-        console.log('loadNearbyItems');
         activateButton('nearby-btn');
 
         // The request parameters
