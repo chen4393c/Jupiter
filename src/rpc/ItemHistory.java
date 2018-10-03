@@ -31,7 +31,6 @@ public class ItemHistory extends HttpServlet {
      */
     public ItemHistory() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	/**
